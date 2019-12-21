@@ -69,7 +69,7 @@ def extract_dir(root, kind):
     if not os.path.isdir(root):
         print("ERROR: invalid args")
         sys.exit(1)
-        
+
     # traverse over all subdirs of the provided dir, and find
     # only files with the proper extension
     abs_paths=[]
@@ -105,4 +105,3 @@ if __name__ == "__main__":
         sys.exit(1)
 
     extract_dir(path,kind)
-    
