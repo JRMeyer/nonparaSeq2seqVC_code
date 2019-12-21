@@ -20,7 +20,6 @@ def extract_mel_spec(filename):
                              pad_mode='reflect')
     spec= librosa.magphase(spec)[0]
     log_spectrogram = np.log(spec).astype(np.float32)
-
     mel_spectrogram = librosa.feature.melspectrogram(S=spec, 
                                                      sr=sample_rate, 
                                                      n_mels=80,
@@ -97,3 +96,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     extract_dir(path,kind)
+    
