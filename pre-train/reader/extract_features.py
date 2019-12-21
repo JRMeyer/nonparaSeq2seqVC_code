@@ -37,7 +37,6 @@ def extract_mel_spec(filename):
     np.save(file=filename.replace(".wav", ".spec"), arr=log_spectrogram)
     np.save(file=filename.replace(".wav", ".mel"), arr=log_mel_spectrogram)
 
-
 def extract_phonemes(filename):
     from phonemizer.phonemize import phonemize
     from phonemizer.backend import FestivalBackend
@@ -56,6 +55,7 @@ def extract_phonemes(filename):
     with open(filename.replace(".txt", ".phones"), "w") as outfile:
         print(phones, file=outfile)
 
+    
 def extract_dir(root, kind):
     if kind =="audio":
         extraction_function=extract_mel_spec
@@ -105,3 +105,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     extract_dir(path,kind)
+    
