@@ -48,7 +48,6 @@ def extract_phonemes(filename):
                                                syllable='',
                                                word='')
         )
-
     with open(filename.replace(".txt", ".phones"), "w") as outfile:
         print(phones, file=outfile)
 
@@ -63,7 +62,6 @@ def extract_dir(root, kind):
     else:
         print("ERROR")
         sys.exit(1)
-
     # traverse over all subdirs of the provided dir, and find
     # only files with the proper extension
     abs_paths=[]
@@ -72,7 +70,7 @@ def extract_dir(root, kind):
             abs_path = os.path.abspath(os.path.join(dirpath, f))
             if abs_path.endswith(ext):
                  abs_paths.append(abs_path)
-            
+    
     pool = Pool(cpu_count())
     pool.map(extraction_function,abs_paths)
         
@@ -99,4 +97,3 @@ if __name__ == "__main__":
         sys.exit(1)
 
     extract_dir(path,kind)
-    

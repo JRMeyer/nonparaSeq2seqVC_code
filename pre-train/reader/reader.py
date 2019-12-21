@@ -28,17 +28,6 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         
         self.file_path_list = file_path_list
 
-    def get_path_id(self, path):
-        # Custom this function to obtain paths and speaker id
-        # Deduce filenames
-        spec_path = path
-        text_path = path.replace('spec', 'text').replace('npy', 'txt').replace('log-', '')
-        mel_path = path.replace('spec', 'mel')
-        speaker_id = path.split('/')[-2]
-
-        return mel_path, spec_path, text_path, speaker_id
-
-
     def get_text_mel_id_pair(self, path):
         '''
         You should Modify this function to read your own data.
@@ -69,7 +58,6 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         # print(mel.shape)
         speaker_id = torch.LongTensor([sp2id[speaker_id]])
         return phones, mel, speaker_id
-            
     def __getitem__(self, index):
         return self.get_text_mel_id_pair(self.file_path_list[index])
 
@@ -89,8 +77,8 @@ class TextMelIDCollate():
         # print(len(batch[0]))
             
         text_lengths = torch.IntTensor([len(x[0]) for x in batch])
-        mel_lengths = torch.IntTensor([x[1].size(1) for x in batch])
-        mel_bin = batch[0][1].size(0)
+        mel_lengths = torch.IntTensor([x[2].size(1) for x in batch])
+        mel_bin = batch[0][2].size(0)
 
         max_text_len = torch.max(text_lengths).item()
         max_mel_len = torch.max(mel_lengths).item()
@@ -113,11 +101,8 @@ class TextMelIDCollate():
             text =  batch[i][0]
             mel = batch[i][1]
             speaker_id[i] = batch[i][2][0]
-            # print("text=",text.shape,"mel=",mel.shape,"ID=",speaker_id.shape)
-
             text_input_padded[i,:text.size(0)] = text 
             mel_padded[i,  :, :mel.size(1)] = mel
-            speaker_id[i] = batch[i][3][0]
             # make sure the downsampled stop_token_padded have the last eng flag 1. 
             stop_token_padded[i, mel.size(1)-self.n_frames_per_step:] = 1
 
