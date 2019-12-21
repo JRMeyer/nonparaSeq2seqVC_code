@@ -24,13 +24,31 @@ def extract_mel_spec(filename):
 
     np.save(file=filename.replace(".wav", ".spec"), arr=mel_spec)
 
+def extract_phonemes(filename):
+    from phonemizer.phonemize import phonemize
+    from phonemizer.backend import FestivalBackend
+    from phonemizer.separator import Separator
+    
+    with open(filename) as f:
+        text=f.read()
+        phones = phonemize(text,
+                           language='en-us',
+                           backend='festival',
+                           separator=Separator(phone=' ',
+                                               syllable='',
+                                               word='')
+        )
 
+    with open(filename.replace(".txt", ".phones"), "w") as outfile:
+        print(phones, file=outfile)
+
+    
 def extract_dir(root, kind):
     if kind =="audio":
         extraction_function=extract_mel_spec
         ext=".wav"
     elif kind =="text":
-        extraction_function=extract_phones
+        extraction_function=extract_phonemes
         ext=".txt"
     else:
         print("ERROR")
@@ -53,3 +71,4 @@ if __name__ == "__main__":
     kind = sys.argv[2]
 
     extract_dir(path,kind)
+    
