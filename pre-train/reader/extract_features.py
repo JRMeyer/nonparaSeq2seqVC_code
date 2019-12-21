@@ -58,7 +58,7 @@ def extract_dir(root, kind):
         extraction_function=extract_mel_spec
         ext=".wav"
     elif kind =="text":
-        extraction_function=extract_phones
+        extraction_function=extract_phonemes
         ext=".txt"
     else:
         print("ERROR")
@@ -99,3 +99,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     extract_dir(path,kind)
+    
