@@ -9,11 +9,11 @@ class TextMelIDLoader(torch.utils.data.Dataset):
     
     def __init__(self, list_file, mean_std_file, shuffle=True):
         '''
-        list_file: 1-column: /path/speaker_id/utt_id
+        list_file: 1-column: /path/speaker_id/speaker_id_utt_id
         where the following exist:
         
-        /path/speaker_id/utt_id.phones (phonemizer / festival)
-        /path/speaker_id/utt_id.mel (deepvoice3 / festival)
+        /path/speaker_id_utt_id.phones (from extract_features.py or phonemizer / festival)
+        /path/speaker_id_utt_id.mel (from extract_features.py or deepvoice3 / festival)
         '''
         file_path_list = []
         with open(list_file) as f:
@@ -42,7 +42,7 @@ class TextMelIDLoader(torch.utils.data.Dataset):
 
         # Deduce filenames
         phones_path = path+".phones"
-        mel_path = path+".mel"
+        mel_path = path+".mel.npy"
         speaker_id = path.split('/')[-2] # speaker id = dir in which files live
 
         # Load data from disk
