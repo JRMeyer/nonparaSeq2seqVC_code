@@ -12,15 +12,10 @@ def gcd(a,b):
 def lcm(a,b):
     return a*b//gcd(a,b)
 
-
-if __name__ == "__main__":
-    print(lcm(3,2))
-
 def get_mask_from_lengths(lengths, max_len=None):
     if max_len is None:
         max_len = torch.max(lengths).item()
-    ids = torch.arange(0, max_len, out=torch.cuda.LongTensor(max_len))
-    #print ids
+    ids = torch.arange(0, int(max_len), out=torch.cuda.LongTensor(int(max_len)))
     mask = (ids < lengths.unsqueeze(1)).byte()
     return mask
 
@@ -54,7 +49,3 @@ def test_loss():
 
     l = torch.nn.L1Loss(reduction='none')(data1,data2)
     print(l)
-
-
-#if __name__ == '__main__':
-#    test_mask()

@@ -4,7 +4,7 @@ from torch.autograd import Variable
 from math import sqrt
 from .utils import to_gpu
 from .decoder import Decoder
-from .layers import SpeakerClassifier, SpeakerEncoder, AudioSeq2seq, TextEncoder,  PostNet, MergeNet
+from .layers import SpeakerClassifier, SpeakerEncoder, AudioSeq2seq, TextEncoder, PostNet, MergeNet
 
 
 class Parrot(nn.Module):
@@ -56,7 +56,7 @@ class Parrot(nn.Module):
         
         text_input_padded = to_gpu(text_input_padded).long()
         mel_padded = to_gpu(mel_padded).float()
-        spc_padded = to_gpu(spc_padded).float()
+        # spc_padded = to_gpu(spc_padded).float()
         speaker_id = to_gpu(speaker_id).long()
         text_lengths = to_gpu(text_lengths).long()
         mel_lengths = to_gpu(mel_lengths).long()

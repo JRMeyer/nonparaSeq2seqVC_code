@@ -135,6 +135,8 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
         for i, batch in enumerate(val_loader):
 
             x, y = model.parse_batch(batch)
+            print(x)
+            print(y)
 
             if i%2 == 0:
                 y_pred = model(x, True)
@@ -233,7 +235,6 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
         output_directory, log_directory, rank)
 
     train_loader, valset, collate_fn = prepare_dataloaders(hparams)
-    print("FFFFFFFFOOOOOOOO")
 
     # Load checkpoint if one exists
     iteration = 0
@@ -255,7 +256,7 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
         print(("Epoch: {}".format(epoch)))
         
         for i, batch in enumerate(train_loader):
-
+            print("batch = ",i)
             start = time.time()
             
             for param_group in optimizer_main.param_groups:
@@ -264,8 +265,6 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
             for param_group in optimizer_sc.param_groups:
                 param_group['lr'] = learning_rate
             
-
-
             model.zero_grad()
             x, y = model.parse_batch(batch)
 
@@ -305,11 +304,9 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
             for p in parameters_main:
                 p.requires_grad_(requires_grad=False)
             
-         
             l_sc.backward()
             grad_norm_sc = torch.nn.utils.clip_grad_norm_(
                 parameters_sc, hparams.grad_clip_thresh)
-
 
             optimizer_sc.step()
 

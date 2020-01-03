@@ -15,7 +15,7 @@ class ParrotLoss(nn.Module):
         self.CrossEntropyLoss = nn.CrossEntropyLoss(reduction='none')
         self.n_frames_per_step = hparams.n_frames_per_step_decoder
         self.eos = hparams.n_symbols
-        self.predict_spectrogram = hparams.predict_spectrogram
+        self.predict_spectrogram = False
 
         self.contr_w = hparams.contrastive_loss_w
         self.consi_w = hparams.consistent_loss_w
@@ -73,7 +73,7 @@ class ParrotLoss(nn.Module):
 
         ## get masks ##
         mel_mask = get_mask_from_lengths(mel_lengths, mel_target.size(2)).unsqueeze(1).expand(-1, mel_target.size(1), -1).float()
-        spc_mask = get_mask_from_lengths(mel_lengths, mel_target.size(2)).unsqueeze(1).expand(-1, spc_target.size(1), -1).float()
+        # spc_mask = get_mask_from_lengths(mel_lengths, mel_target.size(2)).unsqueeze(1).expand(-1, spc_target.size(1), -1).float()
 
         mel_step_lengths = torch.ceil(mel_lengths.float() / self.n_frames_per_step).long()
         stop_mask = get_mask_from_lengths(mel_step_lengths, 
@@ -129,19 +129,21 @@ class ParrotLoss(nn.Module):
         TTEXT = speaker_logit_from_mel_hidden.size(1)
         n_symbols_plus_one = text_logit_from_mel_hidden.size(2)
 
+        print("speaker class")
         # speaker classification loss #
         speaker_encoder_loss = nn.CrossEntropyLoss()(speaker_logit_from_mel, speaker_target)
         _, predicted_speaker = torch.max(speaker_logit_from_mel,dim=1)
         speaker_encoder_acc = ((predicted_speaker == speaker_target).float()).sum() / float(speaker_target.size(0))
 
         speaker_logit_flatten = speaker_logit_from_mel_hidden.reshape(-1, n_speakers) # -> [B* TTEXT, n_speakers]
+        print(speaker_logit_flatten)
         _, predicted_speaker = torch.max(speaker_logit_flatten, dim=1)
         speaker_target_flatten = speaker_target.unsqueeze(1).expand(-1, TTEXT).reshape(-1)
         speaker_classification_acc = ((predicted_speaker == speaker_target_flatten).float() * text_mask.reshape(-1)).sum() / text_mask.sum()
         loss = self.CrossEntropyLoss(speaker_logit_flatten, speaker_target_flatten)
-
         speaker_classification_loss = torch.sum(loss * text_mask.reshape(-1)) / torch.sum(text_mask)
 
+        print("text")
         # text classification loss #
         text_logit_flatten = text_logit_from_mel_hidden.reshape(-1, n_symbols_plus_one)
         text_target_flatten = text_target.reshape(-1)
@@ -150,11 +152,13 @@ class ParrotLoss(nn.Module):
         loss = self.CrossEntropyLoss(text_logit_flatten, text_target_flatten)
         text_classification_loss = torch.sum(loss * text_mask_plus_one.reshape(-1)) / torch.sum(text_mask_plus_one)
 
+        print("speaker adv")
         # speaker adversival loss #
-        flatten_target = 1. / n_speakers * torch.ones_like(speaker_logit_flatten)
+        flatten_target = 1.0 / n_speakers * torch.ones_like(speaker_logit_flatten)
         loss = self.MSELoss(F.softmax(speaker_logit_flatten, dim=1), flatten_target)
         mask = text_mask.unsqueeze(2).expand(-1,-1, n_speakers).reshape(-1, n_speakers)
 
+        print("sum losses")
         if self.ce_loss:
             speaker_adversial_loss = - speaker_classification_loss
         else:
@@ -165,8 +169,7 @@ class ParrotLoss(nn.Module):
                 text_classification_loss, speaker_adversial_loss]
             
         acc_list = [speaker_encoder_acc, speaker_classification_acc, text_classification_acc]
-        
-        
+                
         combined_loss1 = recon_loss + recon_loss_post + stop_loss + self.contr_w * contrast_loss + self.consi_w * consist_loss + \
             self.spenc_w * speaker_encoder_loss +  self.texcl_w * text_classification_loss + \
             self.spadv_w * speaker_adversial_loss
