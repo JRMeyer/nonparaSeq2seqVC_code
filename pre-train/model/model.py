@@ -4,7 +4,7 @@ from torch.autograd import Variable
 from math import sqrt
 from .utils import to_gpu
 from .decoder import Decoder
-from .layers import SpeakerClassifier, SpeakerEncoder, AudioSeq2seq, TextEncoder,  PostNet, MergeNet
+from .layers import SpeakerClassifier, SpeakerEncoder, AudioSeq2seq, TextEncoder, PostNet, MergeNet
 
 
 class Parrot(nn.Module):
@@ -51,12 +51,11 @@ class Parrot(nn.Module):
         return params_group1, [p for p in self.speaker_classifier.parameters()]
 
     def parse_batch(self, batch):
-        text_input_padded, mel_padded, spc_padded, speaker_id, \
-                    text_lengths, mel_lengths, gate_padded = batch
+        text_input_padded, mel_padded, spc_padded, speaker_id, text_lengths, mel_lengths, gate_padded = batch
         
         text_input_padded = to_gpu(text_input_padded).long()
         mel_padded = to_gpu(mel_padded).float()
-        spc_padded = to_gpu(spc_padded).float()
+        # spc_padded = to_gpu(spc_padded).float()
         speaker_id = to_gpu(speaker_id).long()
         text_lengths = to_gpu(text_lengths).long()
         mel_lengths = to_gpu(mel_lengths).long()
