@@ -55,6 +55,7 @@ def prepare_dataloaders(hparams):
     collate_fn = TextMelIDCollate(lcm(hparams.n_frames_per_step_encoder,
                                       hparams.n_frames_per_step_decoder))
 
+    print("HERRRREEE")
     train_sampler = DistributedSampler(trainset) \
         if hparams.distributed_run else None
 
@@ -232,6 +233,7 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
         output_directory, log_directory, rank)
 
     train_loader, valset, collate_fn = prepare_dataloaders(hparams)
+    print("FFFFFFFFOOOOOOOO")
 
     # Load checkpoint if one exists
     iteration = 0
