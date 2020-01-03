@@ -31,7 +31,6 @@ def extract_mel_spec(filename):
                                                      norm=1
                                                      )
     log_mel_spectrogram = np.log(mel_spectrogram).astype(np.float32)
-    
     np.save(file=filename.replace(".wav", ".spec"), arr=log_spectrogram)
     np.save(file=filename.replace(".wav", ".mel"), arr=log_mel_spectrogram)
 
@@ -58,13 +57,10 @@ def extract_dir(root, kind):
         extraction_function=extract_mel_spec
         ext=".wav"
     elif kind =="text":
-        extraction_function=extract_phonemes
+        extraction_function=extract_phones
         ext=".txt"
     else:
-        print("ERROR: invalid args")
-        sys.exit(1)
-    if not os.path.isdir(root):
-        print("ERROR: invalid args")
+        print("ERROR")
         sys.exit(1)
     # traverse over all subdirs of the provided dir, and find
     # only files with the proper extension
@@ -101,4 +97,3 @@ if __name__ == "__main__":
         sys.exit(1)
 
     extract_dir(path,kind)
-    
