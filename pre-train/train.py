@@ -135,8 +135,6 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
         for i, batch in enumerate(val_loader):
 
             x, y = model.parse_batch(batch)
-            # print(x)
-            # print(y)
 
             if i%2 == 0:
                 y_pred = model(x, True)
@@ -235,7 +233,6 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
         output_directory, log_directory, rank)
 
     train_loader, valset, collate_fn = prepare_dataloaders(hparams)
-    print("FFFFFFFFOOOOOOOO")
 
     # Load checkpoint if one exists
     iteration = 0

@@ -47,20 +47,18 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         speaker_id = path.split('/')[-2] # speaker id = dir in which files live
 
         # Load data from disk
-        try:
-            with open(phones_path, "r") as f:
-                # the phoneme transcript should be one line, and space-delimited
-                phones = [ ph2id[phone] for phone in f.read().split() ]
-            mel = np.load(mel_path)
-            # Format for pytorch
-            phones = torch.LongTensor(phones)
-            mel = torch.from_numpy(np.transpose(mel))
-            speaker_id = torch.LongTensor([sp2id[speaker_id]])
-            
-            return (phones_input, mel, speaker_id)
+        with open(phones_path, "r") as f:
+            # the phoneme transcript should be one line, and space-delimited
+            phones = [ ph2id[phone] for phone in f.read().split() ]
+        mel = np.load(mel_path)
         
-        except Exception as e:
-            print(e, path)
+        # Format for pytorch
+        phones = torch.LongTensor(phones)
+        mel = torch.from_numpy(mel)
+        print(mel.shape)
+        speaker_id = torch.LongTensor([sp2id[speaker_id]])
+        return phones, mel, speaker_id
+            
     def __getitem__(self, index):
         return self.get_text_mel_id_pair(self.file_path_list[index])
 
@@ -77,11 +75,10 @@ class TextMelIDCollate():
         '''
         batch is list of (text_input, mel, speaker_id)
         '''
-        # print(len(batch[0]))
             
         text_lengths = torch.IntTensor([len(x[0]) for x in batch])
-        mel_lengths = torch.IntTensor([x[2].size(1) for x in batch])
-        mel_bin = batch[0][2].size(0)
+        mel_lengths = torch.IntTensor([x[1].size(1) for x in batch])
+        mel_bin = batch[0][1].size(0)
 
         max_text_len = torch.max(text_lengths).item()
         max_mel_len = torch.max(mel_lengths).item()
