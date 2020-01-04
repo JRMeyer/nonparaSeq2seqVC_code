@@ -55,7 +55,7 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         # Format for pytorch
         phones = torch.LongTensor(phones)
         mel = torch.from_numpy(mel)
-        print(mel.shape)
+        # print(mel.shape)
         speaker_id = torch.LongTensor([sp2id[speaker_id]])
         return phones, mel, speaker_id
             
