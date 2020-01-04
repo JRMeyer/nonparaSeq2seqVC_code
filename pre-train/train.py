@@ -135,8 +135,8 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
         for i, batch in enumerate(val_loader):
 
             x, y = model.parse_batch(batch)
-            print(x)
-            print(y)
+            # print(x)
+            # print(y)
 
             if i%2 == 0:
                 y_pred = model(x, True)
@@ -272,7 +272,9 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
                 y_pred = model(x, True)
                 losses, acces, l_main, l_sc  = criterion(y_pred, y, True)
             else:
+                print("HERE0")
                 y_pred = model(x, False)
+                print("HERE1")
                 losses, acces, l_main, l_sc  = criterion(y_pred, y, False)
 
             if hparams.distributed_run:
