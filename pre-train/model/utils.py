@@ -16,7 +16,7 @@ def get_mask_from_lengths(lengths, max_len=None):
     if max_len is None:
         max_len = torch.max(lengths).item()
     ids = torch.arange(0, int(max_len), out=torch.cuda.LongTensor(int(max_len)))
-    mask = (ids < lengths.unsqueeze(1)).byte()
+    mask = (ids < lengths.unsqueeze(1)).bool()
     return mask
 
 def to_gpu(x):
