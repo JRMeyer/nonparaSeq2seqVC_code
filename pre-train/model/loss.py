@@ -130,14 +130,17 @@ class ParrotLoss(nn.Module):
         TTEXT = speaker_logit_from_mel_hidden.size(1)
         n_symbols_plus_one = text_logit_from_mel_hidden.size(2)
 
-        print("speaker class")
+        print("speaker class - begin")
         # speaker classification loss #
+        # print(speaker_logit_from_mel.shape)
+        # print(speaker_target.shape)
         speaker_encoder_loss = nn.CrossEntropyLoss()(speaker_logit_from_mel, speaker_target)
+        print("speaker class - end")
         _, predicted_speaker = torch.max(speaker_logit_from_mel,dim=1)
         speaker_encoder_acc = ((predicted_speaker == speaker_target).float()).sum() / float(speaker_target.size(0))
-
+        
         speaker_logit_flatten = speaker_logit_from_mel_hidden.reshape(-1, n_speakers) # -> [B* TTEXT, n_speakers]
-        print(speaker_logit_flatten)
+        # print(speaker_logit_flatten)
         _, predicted_speaker = torch.max(speaker_logit_flatten, dim=1)
         speaker_target_flatten = speaker_target.unsqueeze(1).expand(-1, TTEXT).reshape(-1)
         speaker_classification_acc = ((predicted_speaker == speaker_target_flatten).float() * text_mask.reshape(-1)).sum() / text_mask.sum()

@@ -55,7 +55,7 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         # Format for pytorch
         phones = torch.LongTensor(phones)
         mel = torch.from_numpy(mel)
-        print(mel.shape)
+        # print(mel.shape)
         speaker_id = torch.LongTensor([sp2id[speaker_id]])
         return phones, mel, speaker_id
             
@@ -75,7 +75,7 @@ class TextMelIDCollate():
         '''
         batch is list of (text_input, mel, speaker_id)
         '''
-        print(len(batch[0]))
+        # print(len(batch[0]))
             
         text_lengths = torch.IntTensor([len(x[0]) for x in batch])
         mel_lengths = torch.IntTensor([x[1].size(1) for x in batch])
@@ -102,7 +102,7 @@ class TextMelIDCollate():
             text =  batch[i][0]
             mel = batch[i][1]
             speaker_id[i] = batch[i][2][0]
-            print("text=",text.shape,"mel=",mel.shape,"ID=",speaker_id.shape)
+            # print("text=",text.shape,"mel=",mel.shape,"ID=",speaker_id.shape)
 
             text_input_padded[i,:text.size(0)] = text 
             mel_padded[i,  :, :mel.size(1)] = mel
