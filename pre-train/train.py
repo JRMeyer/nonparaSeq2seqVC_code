@@ -133,9 +133,7 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
         reduced_val_tts_acces, reduced_val_vc_acces = np.zeros([3], dtype=np.float32), np.zeros([3], dtype=np.float32)
 
         for i, batch in enumerate(val_loader):
-
             x, y = model.parse_batch(batch)
-
             if i%2 == 0:
                 y_pred = model(x, True)
             else:
@@ -189,10 +187,19 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
     model.train()
     if rank == 0:
         print(("Validation loss {}: TTS {:9f}  VC {:9f}".format(iteration, val_loss_tts, val_loss_vc)))
-        logger.log_validation(val_loss_tts, reduced_val_tts_losses, reduced_val_tts_acces, model, y_tts, y_tts_pred, iteration, 'tts')
-        logger.log_validation(val_loss_vc, reduced_val_vc_losses, reduced_val_vc_acces, model, y_vc, y_vc_pred, iteration, 'vc')
-
-
+        print("HERE!")
+        # print("val_loss_tts=",val_loss_tts.shape)
+        # print("reduced_val_tts_losses=",reduced_val_tts_losses.shape)
+        # print("reduced_val_tts_acces=",reduced_val_tts_acces.shape)
+        # print("model=", model.shape)
+        # print("y_tts=",y_tts.shape)
+        # print("y_tts_pred=", y_tts_pred.shape)
+        # print("iteration=",iteration.shape)
+        
+        # logger.log_validation(val_loss_tts, reduced_val_tts_losses, reduced_val_tts_acces, model, y_tts, y_tts_pred, iteration, 'tts')
+        print("HERE!!!")
+        # logger.log_validation(val_loss_vc, reduced_val_vc_losses, reduced_val_vc_acces, model, y_vc, y_vc_pred, iteration, 'vc')
+        print("HERE!!!!!!!!!!!!!")
 
 def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
           rank, group_name, hparams):
@@ -270,9 +277,7 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
                 y_pred = model(x, True)
                 losses, acces, l_main, l_sc  = criterion(y_pred, y, True)
             else:
-                print("HERE0")
                 y_pred = model(x, False)
-                print("HERE1")
                 losses, acces, l_main, l_sc  = criterion(y_pred, y, False)
 
             if hparams.distributed_run:
