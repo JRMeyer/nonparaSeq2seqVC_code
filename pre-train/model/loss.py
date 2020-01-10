@@ -130,16 +130,19 @@ class ParrotLoss(nn.Module):
         n_symbols_plus_one = text_logit_from_mel_hidden.size(2)
 
         speaker_encoder_loss = nn.CrossEntropyLoss()(speaker_logit_from_mel, speaker_target)
+        print("speaker class - end")
         _, predicted_speaker = torch.max(speaker_logit_from_mel,dim=1)
         speaker_encoder_acc = ((predicted_speaker == speaker_target).float()).sum() / float(speaker_target.size(0))
-        print("speaker_enc_acc=", speaker_encoder_acc)
+
         speaker_logit_flatten = speaker_logit_from_mel_hidden.reshape(-1, n_speakers) # -> [B* TTEXT, n_speakers]
+        # print(speaker_logit_flatten)
         _, predicted_speaker = torch.max(speaker_logit_flatten, dim=1)
         speaker_target_flatten = speaker_target.unsqueeze(1).expand(-1, TTEXT).reshape(-1)
         speaker_classification_acc = ((predicted_speaker == speaker_target_flatten).float() * text_mask.reshape(-1)).sum() / text_mask.sum()
         loss = self.CrossEntropyLoss(speaker_logit_flatten, speaker_target_flatten)
         speaker_classification_loss = torch.sum(loss * text_mask.reshape(-1)) / torch.sum(text_mask)
 
+        print("text")
         # text classification loss #
         text_logit_flatten = text_logit_from_mel_hidden.reshape(-1, n_symbols_plus_one)
         text_target_flatten = text_target.reshape(-1)
@@ -148,11 +151,13 @@ class ParrotLoss(nn.Module):
         loss = self.CrossEntropyLoss(text_logit_flatten, text_target_flatten)
         text_classification_loss = torch.sum(loss * text_mask_plus_one.reshape(-1)) / torch.sum(text_mask_plus_one)
 
+        print("speaker adv")
         # speaker adversival loss #
         flatten_target = 1.0 / n_speakers * torch.ones_like(speaker_logit_flatten)
         loss = self.MSELoss(F.softmax(speaker_logit_flatten, dim=1), flatten_target)
         mask = text_mask.unsqueeze(2).expand(-1,-1, n_speakers).reshape(-1, n_speakers)
 
+        print("sum losses")
         if self.ce_loss:
             speaker_adversial_loss = - speaker_classification_loss
         else:
