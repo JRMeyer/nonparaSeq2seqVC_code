@@ -51,7 +51,7 @@ class Parrot(nn.Module):
         return params_group1, [p for p in self.speaker_classifier.parameters()]
 
     def parse_batch(self, batch):
-        text_input_padded, mel_padded, spc_padded, speaker_id, \
+        text_input_padded, mel_padded, speaker_id, \
                     text_lengths, mel_lengths, stop_token_padded = batch
         
         text_input_padded = to_gpu(text_input_padded).long()
@@ -63,7 +63,7 @@ class Parrot(nn.Module):
         stop_token_padded = to_gpu(stop_token_padded).float()
 
         return ((text_input_padded, mel_padded, text_lengths, mel_lengths),
-                (text_input_padded, mel_padded, spc_padded,  speaker_id, stop_token_padded))
+                (text_input_padded, mel_padded, speaker_id, stop_token_padded))
 
 
     def forward(self, inputs, input_text):

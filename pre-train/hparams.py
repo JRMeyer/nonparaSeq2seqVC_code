@@ -22,6 +22,7 @@ def create_hparams(hparams_string=None, verbose=False):
         ################################
         training_list='/home/jxzhang/Documents/DataSets/VCTK/list/train_english_extend_no_indian.list',
         validation_list='/home/jxzhang/Documents/DataSets/VCTK/list/eval_english_extend_no_indian.list',
+        test_list='/home/josh/vctk/processed/list.test',
         mel_mean_std='/home/jxzhang/Documents/DataSets/VCTK/mel_mean_std.npy',
 
         ################################

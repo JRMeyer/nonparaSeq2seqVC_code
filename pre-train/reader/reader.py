@@ -8,7 +8,7 @@ import os
 
 class TextMelIDLoader(torch.utils.data.Dataset):
     
-    def __init__(self, list_file, mean_std_file, shuffle=True):
+    def __init__(self, list_file, shuffle=True):
         '''
         list_file: 1-column: /path/speaker_id/speaker_id_utt_id
         where the following exist:
@@ -106,6 +106,6 @@ class TextMelIDCollate():
             # make sure the downsampled stop_token_padded have the last eng flag 1. 
             stop_token_padded[i, mel.size(1)-self.n_frames_per_step:] = 1
 
-        return text_input_padded, mel_padded, spc_padded, speaker_id, \
+        return text_input_padded, mel_padded, speaker_id, \
                     text_lengths, mel_lengths, stop_token_padded
     

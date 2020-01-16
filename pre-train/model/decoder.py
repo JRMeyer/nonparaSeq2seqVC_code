@@ -46,7 +46,7 @@ class Decoder(nn.Module):
             self.hidden_cat_dim + hparams.decoder_rnn_dim,
             hparams.n_mel_channels * hparams.n_frames_per_step_decoder)
 
-        self.stop_layer = LinearNorm(
+        self.gate_layer = LinearNorm(
             self.hidden_cat_dim + hparams.decoder_rnn_dim, 1,
             bias=True, w_init_gain='sigmoid')
 
@@ -218,7 +218,7 @@ class Decoder(nn.Module):
                 (decoder_rnn_output, context), dim=1)
             
             mel_output = self.linear_projection(decoder_hidden_attention_context)
-            stop_output = self.stop_layer(decoder_hidden_attention_context)
+            stop_output = self.gate_layer(decoder_hidden_attention_context)
 
             mel_outputs += [mel_output.squeeze(1)] #? perhaps don't need squeeze
             stop_outputs += [stop_output.squeeze()]
@@ -256,7 +256,7 @@ class Decoder(nn.Module):
                 (decoder_rnn_output, context), dim=1)
             
             mel_output = self.linear_projection(decoder_hidden_attention_context)
-            stop_output = self.stop_layer(decoder_hidden_attention_context)
+            stop_output = self.gate_layer(decoder_hidden_attention_context)
 
             mel_outputs += [mel_output.squeeze(1)]
             stop_outputs += [stop_output]
