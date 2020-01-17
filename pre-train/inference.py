@@ -79,7 +79,7 @@ if __name__ == "__main__":
     
     #generation list
     test_list = hparams.test_list
-    checkpoint_path='outdir/checkpoint_0'
+    checkpoint_path='/home/josh/Desktop/non-para-s2s-results/checkpoint_413000'
     # TTS or VC task?
     input_text=False
     # number of utterances for generation
